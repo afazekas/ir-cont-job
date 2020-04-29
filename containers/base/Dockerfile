@@ -14,9 +14,12 @@
 
 FROM centos:8
 USER root
+
+# Our prefered lsb mta is postfix (not exim)
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf update -y && \
     dnf install -y \
+      postfix \
       make \
       sudo \
       bzip2 \
