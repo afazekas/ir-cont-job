@@ -22,7 +22,7 @@ ENV IR_HOME=/root/infrared
 # TODO fetching as is not fast consider using the base64 diff download  way
 
 # Change-Id: I86d4c27c413250c703ff90d62ecec90ab6b9d358 custom image input
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/53/500953/2 && git cherry-pick FETCH_HEAD
+RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/53/500953/3 && git cherry-pick FETCH_HEAD
 
 # Change-Id: I09f67d61f00d6997284bcecb2ea8277d56e98084 no tag discovery
 RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/24/499224/1 && git cherry-pick --strategy-option=ours FETCH_HEAD
@@ -37,7 +37,7 @@ RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/chang
 RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/65/499365/3 && git cherry-pick FETCH_HEAD
 
 # Change-Id: Icc6f7afae0f74e288f0d8418e26fa1a53c7a188f repo
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/93/500093/3 && git cherry-pick FETCH_HEAD
+RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/93/500093/4 && git cherry-pick FETCH_HEAD
 
 # Change-Id:  Ie644f0b8b7090899ab86b81499c4a9c4a2899c02 virt
 RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/26/498226/3 && git cherry-pick FETCH_HEAD
