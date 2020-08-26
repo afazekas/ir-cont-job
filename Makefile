@@ -30,7 +30,7 @@ state/${CONTAINER_PREFIX}-jjb: containers/jjb/Dockerfile state/${CONTAINER_PREFI
 	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-jjb:latest
 	touch $@
 
-state/${CONTAINER_PREFIX}-jenkins-plugins: containers/jenkins_plugins/Dockerfile containers/jenkins_plugins/security.groovy  state/${CONTAINER_PREFIX}-jenkins-base
+state/${CONTAINER_PREFIX}-jenkins-plugins: containers/jenkins_plugins/Dockerfile containers/jenkins_plugins/security.groovy containers/jenkins_plugins/plugins.txt state/${CONTAINER_PREFIX}-jenkins-base
 	cd containers/jenkins_plugins; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jenkins-plugins:latest
 	touch $@
 

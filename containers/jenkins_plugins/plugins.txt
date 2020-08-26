@@ -206,6 +206,7 @@ workflow-multibranch
 workflow-scm-step
 workflow-step-api
 workflow-support
+ws-cleanup
 xunit
 xvnc
 zmq-event-publisher
