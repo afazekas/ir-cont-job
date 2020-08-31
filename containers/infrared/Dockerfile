@@ -50,4 +50,6 @@ RUN cd plugins/cloud-config; git fetch "https://review.gerrithub.io/rhos-infra/c
 
 RUN pip install -e .
 
+RUN infrared plugin add  https://github.com/openstack/ansible-role-collect-logs.git --src-path infrared_plugin && infrared plugin list
+
 WORKDIR /root
