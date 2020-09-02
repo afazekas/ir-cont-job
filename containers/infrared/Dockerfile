@@ -22,16 +22,13 @@ ENV IR_HOME=/root/infrared
 # TODO fetching as is not fast consider using the base64 diff download  way
 
 # Change-Id: I86d4c27c413250c703ff90d62ecec90ab6b9d358 custom image input
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/53/500953/3 && git cherry-pick FETCH_HEAD
-
-# Change-Id: I09f67d61f00d6997284bcecb2ea8277d56e98084 no tag discovery
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/24/499224/1 && git cherry-pick --strategy-option=ours FETCH_HEAD
+RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/53/500953/4 && git cherry-pick FETCH_HEAD
 
 # Change-Id: I3684d3a8d5deb93ee25b939a1983c07b74ea7c9a overcloud args
 RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/87/499287/2 && git cherry-pick FETCH_HEAD
 
 # Change-Id: If5766983b17905158d407c780ce38eb84fdf8860 optional cert
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/67/500067/3 && git cherry-pick FETCH_HEAD
+RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/67/500067/5 && git cherry-pick FETCH_HEAD
 
 # Change-Id: Ic8babab2b01c8f212bbe02a58a3784cde78d8d52 ansible
 RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/65/499365/3 && git cherry-pick FETCH_HEAD
@@ -52,4 +49,19 @@ RUN pip install -e .
 
 RUN infrared plugin add  https://github.com/openstack/ansible-role-collect-logs.git --src-path infrared_plugin && infrared plugin list
 
-WORKDIR /root
+# mitogen ?
+RUN echo $'\
+[defaults]\n\
+host_key_checking = False\n\
+forks = 500\n\
+pipelining = True\n\
+timeout = 30\n\
+force_color = 1\n\
+roles_path = infrared/common/roles\n\
+library = infrared/common/library\n\
+filter_plugins = infrared/common/filter_plugins\n\
+callback_plugins = infrared/common/callback_plugins\n\
+callback_whitelist = timer,profile_tasks,junit_report\n\
+\n\
+[ssh_connection]\n\
+control_path = /root/mux-%%h-%%r\n' >/root/infrared/ansible.cfg
