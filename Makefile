@@ -30,12 +30,16 @@ state/${CONTAINER_PREFIX}-jjb: containers/jjb/Dockerfile state/${CONTAINER_PREFI
 	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-jjb:latest
 	touch $@
 
+state/${CONTAINER_PREFIX}-dlrnapi: containers/dlrnapi/Dockerfile state/${CONTAINER_PREFIX}-py
+	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-dlrnapi:latest
+	touch $@
+
 state/${CONTAINER_PREFIX}-jenkins-plugins: containers/jenkins_plugins/Dockerfile containers/jenkins_plugins/security.groovy containers/jenkins_plugins/plugins.txt state/${CONTAINER_PREFIX}-jenkins-base
 	cd containers/jenkins_plugins; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jenkins-plugins:latest
 	touch $@
 
 
-all: state/${CONTAINER_PREFIX}-infrared state/${CONTAINER_PREFIX}-go state/${CONTAINER_PREFIX}-jenkins-plugins state/${CONTAINER_PREFIX}-jjb
+all: state/${CONTAINER_PREFIX}-infrared state/${CONTAINER_PREFIX}-go state/${CONTAINER_PREFIX}-jenkins-plugins state/${CONTAINER_PREFIX}-jjb state/${CONTAINER_PREFIX}-dlrnapi
 
 clean:
 	-rm state/${CONTAINER_PREFIX}-base
