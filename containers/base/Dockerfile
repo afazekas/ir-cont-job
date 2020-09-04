@@ -16,6 +16,7 @@ FROM centos:8
 USER root
 
 # Our prefered lsb mta is postfix (not exim)
+# curl is prefferd in most cases, but wget still used in many places
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf update -y && \
     dnf install -y \
@@ -38,6 +39,10 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
       strace \
       vim-enhanced \
       gdb \
+      jq \
+      wget \
+      iproute \
+      sshpass \
       redhat-lsb-core
 
 # lsb distro MUST have /usr/bin/python

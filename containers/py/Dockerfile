@@ -15,9 +15,9 @@
 FROM ir-base:latest
 USER root
 RUN dnf install -y \
-      iproute \
       python3-devel \
       python3-setuptools \
       python3-virtualenv \
       python3-libselinux \
-      python3-tox 
+      python3-docutils \
+      python3-tox
