@@ -19,31 +19,31 @@ RUN git clone https://github.com/redhat-openstack/infrared.git && git config --g
 WORKDIR infrared
 ENV IR_HOME=/root/infrared
 
-# TODO fetching as is not fast consider using the base64 diff download  way
+# git fetching as is not fast using base64
 
 # Change-Id: I86d4c27c413250c703ff90d62ecec90ab6b9d358 custom image input
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/53/500953/4 && git cherry-pick FETCH_HEAD
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500953/revisions/5/patch?download | base64 -d | patch -p1
 
 # Change-Id: I3684d3a8d5deb93ee25b939a1983c07b74ea7c9a overcloud args
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/87/499287/2 && git cherry-pick FETCH_HEAD
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~499287/revisions/2/patch?download | base64 -d | patch -p1
 
 # Change-Id: If5766983b17905158d407c780ce38eb84fdf8860 optional cert
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/67/500067/5 && git cherry-pick FETCH_HEAD
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500067/revisions/5/patch?download | base64 -d | patch -p1
 
 # Change-Id: Ic8babab2b01c8f212bbe02a58a3784cde78d8d52 ansible
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/65/499365/3 && git cherry-pick FETCH_HEAD
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~499365/revisions/3/patch?download | base64 -d | patch -p1
 
 # Change-Id: Icc6f7afae0f74e288f0d8418e26fa1a53c7a188f repo
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/93/500093/4 && git cherry-pick FETCH_HEAD
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500093/revisions/4/patch?download | base64 -d | patch -p1
 
 # Change-Id:  Ie644f0b8b7090899ab86b81499c4a9c4a2899c02 virt
-RUN git fetch "https://review.gerrithub.io/redhat-openstack/infrared" refs/changes/26/498226/3 && git cherry-pick FETCH_HEAD
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~498226/revisions/3/patch?download | base64 -d | patch -p1
 
 RUN pip install -e . && infrared plugin add all && mkdir -p /root/.config/openstack && mkdir /root/.ssh && chmod 600 /root/.ssh
 
 
 # Branch rhos-infra/cloud-config Change-Id: Ifc3dc443101351d1d84402b768ce2fc28006e02f virt
-RUN cd plugins/cloud-config; git fetch "https://review.gerrithub.io/rhos-infra/cloud-config" refs/changes/62/497962/2 && git cherry-pick FETCH_HEAD
+RUN cd plugins/cloud-config; curl --retry 3 https://review.gerrithub.io/changes/rhos-infra%2Fcloud-config~497962/revisions/2/patch?download | base64 -d | patch -p1
 
 RUN pip install -e .
 
