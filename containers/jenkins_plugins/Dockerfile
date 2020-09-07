@@ -1,4 +1,4 @@
-FROM ir-jenkins-base
+FROM ir-jenkins_base
 
 # Skip initial setup
 ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false

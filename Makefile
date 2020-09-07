@@ -1,47 +1,70 @@
-
-CONTAINER_PREFIX=ir
 .DEFAULT_GOAL := state/${CONTAINER_PREFIX}-infrared
+.PHONY: all clean push
+.SECONDRAY:
+CONTAINER_PREFIX=ir
 
 state/${CONTAINER_PREFIX}-base: $(wildcard  containers/base/*)
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-base:latest
+	cd containers/base; buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-base:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-py: $(wildcard  containers/py/*) state/${CONTAINER_PREFIX}-base
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-py:latest
+	cd containers/py; buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-py:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-infrared: $(wildcard  containers/infrared/*) state/${CONTAINER_PREFIX}-py
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-infrared:latest
+	cd containers/infrared; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-infrared:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-go: $(wildcard  containers/go/*) state/${CONTAINER_PREFIX}-base
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-go:latest
+	cd containers/go; buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-go:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-java: $(wildcard  containers/java/*) state/${CONTAINER_PREFIX}-base
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-java:latest
+	cd containers/java; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-java:latest
 	touch $@
 
-state/${CONTAINER_PREFIX}-jenkins-base: $(wildcard containers/jenkins-base/*) state/${CONTAINER_PREFIX}-java
-	cd containers/jenkins_base; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jenkins-base:latest
+state/${CONTAINER_PREFIX}-jenkins_base: $(wildcard containers/jenkins_base/*) state/${CONTAINER_PREFIX}-java
+	cd containers/jenkins_base; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jenkins_base:latest
+	touch $@
+
+state/${CONTAINER_PREFIX}-jenkins_plugins: $(wildcard containers/jenkins_plugins/*) state/${CONTAINER_PREFIX}-jenkins_base
+	cd containers/jenkins_plugins; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jenkins_plugins:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-jjb: $(wildcard containers/jjb/*) state/${CONTAINER_PREFIX}-py
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-jjb:latest
+	cd containers/jjb; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jjb:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-dlrnapi: $(wildcard containers/dlrnapi/*) state/${CONTAINER_PREFIX}-py
-	buildah build-using-dockerfile -f $<  -t ${CONTAINER_PREFIX}-dlrnapi:latest
+	cd containers/dlrnapi ;buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-dlrnapi:latest
 	touch $@
 
-state/${CONTAINER_PREFIX}-jenkins-plugins: $(wildcard containers/enkins-plugins/*) state/${CONTAINER_PREFIX}-jenkins-base
-	cd containers/jenkins_plugins; buildah build-using-dockerfile -f Dockerfile -t ${CONTAINER_PREFIX}-jenkins-plugins:latest
+TAG=latest
+
+state/registry:
+	mkdir -p $@
+
+# To push use:
+# podman login ...
+# REGISTRY=myregistry/my_reg_prefix make push
+
+state/registry/${REGISTRY}:
+	mkdir -p $@
+
+state/registry/${REGISTRY}/${TAG}:
+	mkdir -p $@
+
+state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-%: state/registry/${REGISTRY}/${TAG} state/${CONTAINER_PREFIX}-%
+	podman tag $(notdir $@) ${REGISTRY}/$(notdir $@):${TAG}
+	podman push ${REGISTRY}/$(notdir $@):${TAG}
 	touch $@
 
+state/registry/${REGISTRY}.done: $(addprefix state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-,$(notdir $(wildcard containers/*)))
+	touch $@
 
-all: state/${CONTAINER_PREFIX}-infrared state/${CONTAINER_PREFIX}-go state/${CONTAINER_PREFIX}-jenkins-plugins state/${CONTAINER_PREFIX}-jjb state/${CONTAINER_PREFIX}-dlrnapi
+all:  $(addprefix state/${CONTAINER_PREFIX},$(wildcard containers/*))
+
+push: state/registry/${REGISTRY}.done
 
 clean:
 	-rm state/${CONTAINER_PREFIX}-base
-
-
