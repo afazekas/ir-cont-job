@@ -21,8 +21,8 @@ ENV IR_HOME=/root/infrared
 
 # git fetching as is not fast using base64
 
-# Change-Id: I86d4c27c413250c703ff90d62ecec90ab6b9d358 custom image input
-RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500953/revisions/5/patch?download | base64 -d | patch -p1
+# Change-Id: I86d4c27c413250c703ff90d62ecec90ab6b9d358 custom container image input
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500953/revisions/6/patch?download | base64 -d | patch -p1
 
 # Change-Id: I3684d3a8d5deb93ee25b939a1983c07b74ea7c9a overcloud args
 RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~499287/revisions/2/patch?download | base64 -d | patch -p1
