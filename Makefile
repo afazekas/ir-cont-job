@@ -39,14 +39,14 @@ state/${CONTAINER_PREFIX}-dlrnapi: $(wildcard containers/dlrnapi/*) state/${CONT
 	cd containers/dlrnapi ;buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-dlrnapi:latest
 	touch $@
 
-TAG=latest
+TAG ?= latest
 
 state/registry:
 	mkdir -p $@
 
 # To push use:
 # podman login ...
-# REGISTRY=myregistry/my_reg_prefix make push
+# TAG=testing REGISTRY=myregistry/my_reg_prefix make push
 
 state/registry/${REGISTRY}:
 	mkdir -p $@
@@ -59,12 +59,12 @@ state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-%: state/registry/${REGIST
 	podman push ${REGISTRY}/$(notdir $@):${TAG}
 	touch $@
 
-state/registry/${REGISTRY}.done: $(addprefix state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-,$(notdir $(wildcard containers/*)))
+state/registry/${REGISTRY}.${TAG}.done: $(addprefix state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-,$(notdir $(wildcard containers/*)))
 	touch $@
 
 all:  $(addprefix state/${CONTAINER_PREFIX},$(wildcard containers/*))
 
-push: state/registry/${REGISTRY}.done
+push: state/registry/${REGISTRY}.${TAG}.done
 
 clean:
 	-rm state/${CONTAINER_PREFIX}-base
