@@ -1,7 +1,7 @@
+CONTAINER_PREFIX=ir
 .DEFAULT_GOAL := state/${CONTAINER_PREFIX}-infrared
 .PHONY: all clean push
 .SECONDRAY:
-CONTAINER_PREFIX=ir
 
 state/${CONTAINER_PREFIX}-base: $(wildcard  containers/base/*)
 	cd containers/base; buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-base:latest
@@ -17,6 +17,10 @@ state/${CONTAINER_PREFIX}-infrared: $(wildcard  containers/infrared/*) state/${C
 
 state/${CONTAINER_PREFIX}-go: $(wildcard  containers/go/*) state/${CONTAINER_PREFIX}-base
 	cd containers/go; buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-go:latest
+	touch $@
+
+state/${CONTAINER_PREFIX}-docker_distribution: $(wildcard  containers/docker_distribution/*) state/${CONTAINER_PREFIX}-go
+	cd containers/docker_distribution; buildah build-using-dockerfile -f Dockerfile  -t ${CONTAINER_PREFIX}-docker_distribution:latest
 	touch $@
 
 state/${CONTAINER_PREFIX}-java: $(wildcard  containers/java/*) state/${CONTAINER_PREFIX}-base
@@ -47,6 +51,7 @@ state/registry:
 # To push use:
 # podman login ...
 # TAG=testing REGISTRY=myregistry/my_reg_prefix make push
+# TAG=testing REGISTRY=myregistry\\:5000/my_reg_prefix make push
 
 state/registry/${REGISTRY}:
 	mkdir -p $@
@@ -55,14 +60,14 @@ state/registry/${REGISTRY}/${TAG}:
 	mkdir -p $@
 
 state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-%: state/registry/${REGISTRY}/${TAG} state/${CONTAINER_PREFIX}-%
-	podman tag $(notdir $@) ${REGISTRY}/$(notdir $@):${TAG}
-	podman push ${REGISTRY}/$(notdir $@):${TAG}
+	podman tag $(notdir $@) $(patsubst \:,:,${REGISTRY})/$(notdir $@):${TAG}
+	podman push $(patsubst \:,:,${REGISTRY})/$(notdir $@):${TAG}
 	touch $@
 
 state/registry/${REGISTRY}.${TAG}.done: $(addprefix state/registry/${REGISTRY}/${TAG}/${CONTAINER_PREFIX}-,$(notdir $(wildcard containers/*)))
 	touch $@
 
-all:  $(addprefix state/${CONTAINER_PREFIX},$(wildcard containers/*))
+all:  $(addprefix state/${CONTAINER_PREFIX}-,$(notdir $(wildcard containers/*)))
 
 push: state/registry/${REGISTRY}.${TAG}.done
 
