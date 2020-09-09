@@ -30,14 +30,17 @@ RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrar
 # Change-Id: If5766983b17905158d407c780ce38eb84fdf8860 optional cert
 RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500067/revisions/5/patch?download | base64 -d | patch -p1
 
-# Change-Id: Ic8babab2b01c8f212bbe02a58a3784cde78d8d52 ansible
-RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~499365/revisions/3/patch?download | base64 -d | patch -p1
+# Change-Id: Ia1a778c4eca7df063bdc5d6ed7eaf36a9df19ee0 ansible
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~501223/revisions/9/patch?download | base64 -d | patch -p1
 
 # Change-Id: Icc6f7afae0f74e288f0d8418e26fa1a53c7a188f repo
 RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~500093/revisions/4/patch?download | base64 -d | patch -p1
 
 # Change-Id:  Ie644f0b8b7090899ab86b81499c4a9c4a2899c02 virt
 RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~498226/revisions/3/patch?download | base64 -d | patch -p1
+
+# Change-Id: I803b074ae0e0c7e1a6f30f96ce33463ec43ac25e image upgrade
+RUN curl --retry 3 https://review.gerrithub.io/changes/redhat-openstack%2Finfrared~501953/revisions/2/patch?download | base64 -d | patch -p1
 
 RUN pip install -e . && infrared plugin add all && mkdir -p /root/.config/openstack && mkdir /root/.ssh && chmod 600 /root/.ssh
 
